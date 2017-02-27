@@ -4,7 +4,7 @@
 from sqlalchemy import Table, Column, Integer, ForeignKey, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from database import get_db
+from ..database import get_db
 
 
 db_session, db_engine = get_db()
