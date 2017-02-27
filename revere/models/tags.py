@@ -1,16 +1,13 @@
-"""Models declerations
-"""
-
-from sqlalchemy import Table, Column, Integer, ForeignKey, String, DateTime, Boolean
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Table, Column, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship
-from ..database import get_db
+from flask_restful import fields
+from revere.database import get_db, get_base
+from revere.models.subscribers import Subscriber
+from revere.models.announcements import Announcement
 
 
 db_session, db_engine = get_db()
-
-Base = declarative_base()
-Base.query = db_session.query_property()
+Base = get_base()
 
 
 def init_db():
@@ -33,6 +30,13 @@ tag_announcements_table = Table(
 )
 
 
+TagFields = {
+    'id': fields.Integer,
+    'name': fields.String,
+    'description': fields.String,
+}
+
+
 class Tag(Base):
     __tablename__ = 'tags'
 
@@ -42,24 +46,3 @@ class Tag(Base):
     subscribers = relationship('Subscriber', secondary=tag_subscribers_table, backref='tags')
     announcements = relationship('Announcement', secondary=tag_announcements_table, backref='tags')
 
-
-class Subscriber(Base):
-    __tablename__ = 'subscribers'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(128))
-    to_email = Column(String(256))
-    cc_email = Column(String(512))
-
-
-class Announcement(Base):
-    __tablename__ = 'announcements'
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(256))
-    description = Column(String(1024))
-    external_url = Column(String(512))
-    extranl_email = Column(String(256))
-    announce_date = Column(DateTime())
-    start_date = Column(DateTime())
-    announced = Column(Boolean(), default=False)
