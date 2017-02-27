@@ -1,6 +1,23 @@
-import os
-from app import app
+"""Application bootstrap
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+Setup the flask application here.
+"""
+
+from flask import Flask
+from flask_restful import Api
+from revere.config import DEBUG
+import types
+
+app = Flask(__name__.split('.')[0])
+api = Api(app)
+app.debug = DEBUG
+
+
+def api_route(self, *args, **kwargs):
+    def wrapper(cls):
+        self.add_resource(cls, *args, **kwargs)
+        return cls
+    return wrapper
+
+
+api.route = types.MethodType(api_route, api)
