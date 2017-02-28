@@ -5,12 +5,19 @@ Setup the flask application here.
 
 from flask import Flask
 from flask_restful import Api
-from revere.config import DEBUG
 import types
 
 app = Flask(__name__.split('.')[0])
 api = Api(app)
-app.debug = DEBUG
+
+# Load configuration
+app.config.from_object('revere.config')
+
+# Override config if environment variable exists
+try:
+    app.config.from_envvar('REVERE_CONFIG_FILE')
+except RuntimeError:
+    pass
 
 
 def api_route(self, *args, **kwargs):
